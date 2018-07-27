@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, Alert, Text, View, StyleSheet, TouchableHighlight, ScrollView, Image} from 'react-native';
+import {Dimensions, Platform, StatusBar, Alert, Text, View, StyleSheet, TouchableHighlight, ScrollView, Image} from 'react-native';
 import Spinner from "react-native-loading-spinner-overlay";
 import HttpService from "../../utils/http";
 import {MapView} from "expo";
@@ -33,7 +33,7 @@ export class Principal extends React.Component {
 
     render(){
         return(
-            <View>
+            <View style={{flex:1}}>
                 <HeaderBar endereco={this.state.tarefa !== null ?this.state.tarefa.endereco:''} navigation={this.props.navigation}/>
                 <ScrollView style={styles.screen} contentStyle={{backgroundColor: '#f2f2f2'}} bounces={false} ref={view => this._scrollView = view}>
                     {this.state.error?<Text style={styles.text}>Verifique sua conexão</Text>:null}
@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
     screen:{
         paddingLeft: 0,
         paddingRight: 0,
-        height: Dimensions.get('window').height - 54,
     },
     banner:{
         height:Dimensions.get('window').height * 0.35,
