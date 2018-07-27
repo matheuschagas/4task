@@ -15,6 +15,8 @@ export class Principal extends React.Component {
     constructor(props) {
         super(props);
         this.state={
+            commentsIndex: 0,
+            commentsSize: 0,
             loading: true,
             error: false,
             id: this.props.navigation.state.params.tarefa,
@@ -27,6 +29,31 @@ export class Principal extends React.Component {
             },
             markers: []
         }
+    }
+
+    render(){
+        return(
+            <View>
+                <HeaderBar endereco={this.state.tarefa !== null ?this.state.tarefa.endereco:''} navigation={this.props.navigation}/>
+                <ScrollView style={styles.screen} contentStyle={{backgroundColor: '#f2f2f2'}} bounces={false} ref={view => this._scrollView = view}>
+                    {this.state.error?<Text style={styles.text}>Verifique sua conexão</Text>:null}
+                    {this.state.tarefa !== null && this._renderItem(this.state.tarefa)}
+                    <View  onLayout={(event) => {
+                        let {x, y, width, height} = event.nativeEvent.layout;
+                        this.setState({commentsSize: height});
+                    }}>
+                        {this.state.tarefa !== null && this.state.tarefa.comentarios.map((comentario, index)=>{
+                            return this._renderComentario(comentario, index)
+                        })}
+                    </View>
+                    <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}} />
+                </ScrollView>
+            </View>
+        )
+    }
+
+    componentWillMount(){
+        this.getTarefa();
     }
 
     async getTarefa(){
@@ -51,10 +78,6 @@ export class Principal extends React.Component {
         }
     }
 
-    componentWillMount(){
-        this.getTarefa();
-    }
-
     _performAction(btn){
         switch (btn){
             case 'Ligar':
@@ -67,6 +90,7 @@ export class Principal extends React.Component {
                 Alert.alert(this.state.tarefa.endereco);
                 break;
             case 'Comentários':
+                this.scrollToComments();
                 break;
             case 'Favoritos':
                 break;
@@ -87,13 +111,24 @@ export class Principal extends React.Component {
     };
 
     scrollToComments() {
-        this._scrollView.scrollTo();
+        if(this.state.commentsIndex===0){
+            this._scrollView.scrollToEnd();
+        }else{
+            if(this.state.commentsSize<(Dimensions.get('window').height-54)){
+                this._scrollView.scrollToEnd();
+            }else{
+                this._scrollView.scrollTo({y:this.state.commentsIndex});
+            }
+        }
     }
 
     _renderItem = (item) =>{
         if(!this.state.loading) {
             return (
-                <View>
+                <View onLayout={(event) => {
+                    let {x, y, width, height} = event.nativeEvent.layout;
+                    this.setState({commentsIndex: height});
+                }}>
                     <Image source={{uri: item.urlFoto}} style={styles.banner}/>
                     <View style={styles.logoContainer}><Image source={{uri: item.urlLogo}} style={styles.logo}/></View>
                     <Text style={styles.titulo}>{item.titulo.toUpperCase()}</Text>
@@ -179,29 +214,13 @@ export class Principal extends React.Component {
             </View>
         </View>)
     }
-
-
-    render(){
-        return(
-            <View>
-                <HeaderBar endereco={this.state.tarefa !== null ?this.state.tarefa.endereco:''}/>
-            <ScrollView style={styles.screen} contentStyle={{backgroundColor: '#f2f2f2'}} bounces={false} ref={view => this._scrollView = view}>
-                {this.state.error?<Text style={styles.text}>Verifique sua conexão</Text>:null}
-                {this.state.tarefa !== null && this._renderItem(this.state.tarefa)}
-                {this.state.tarefa !== null && this.state.tarefa.comentarios.map((comentario, index)=>{
-                    return this._renderComentario(comentario, index)
-                })}
-                <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}} />
-            </ScrollView>
-            </View>
-        )
-    }
 }
 
 const styles = StyleSheet.create({
     screen:{
         paddingLeft: 0,
         paddingRight: 0,
+        height: Dimensions.get('window').height - 54,
     },
     banner:{
         height:Dimensions.get('window').height * 0.35,

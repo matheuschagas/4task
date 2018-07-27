@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, StyleSheet, TouchableHighlight} from 'react-native';
 
 
 export class Servicos extends React.Component {
@@ -10,6 +10,9 @@ export class Servicos extends React.Component {
         headerStyle: {
             backgroundColor: '#e08b00'
         },
+        headerLeft:<View style={{marginLeft: 10}}><TouchableHighlight underlayColor={'#e08b00'} onPress={()=>navigation.goBack()}>
+            <Text style={{fontFamily: 'fontawesome', color:'#fff', fontSize: 35}}>{String.fromCharCode(61657)}</Text>
+        </TouchableHighlight></View>
     });
 
     constructor(props) {

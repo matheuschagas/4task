@@ -51,6 +51,7 @@ export default class App extends React.Component{
             require('./assets/images/SERVICOS.png'),
             require('./assets/images/FAVORITOS.png'),
             require('./assets/images/LIGAR.png'),
+            require('./assets/images/ENDERECOBranco.png'),
         ]);
         Expo.Font.loadAsync({
             'fontawesome': require('./assets/fonts/fontawesome.ttf')
